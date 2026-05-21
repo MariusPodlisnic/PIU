@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -39,11 +41,31 @@ namespace QuizWPF
     }
 
     // ─── Code-behind MainWindow ──────────────────────────────────────────────
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private readonly AdministrareIntrebariFisierText _adminIntrebari;
+        private readonly AdministrareUtilizatoriFisierText _adminUtilizatori;
         private List<Intrebare> _toateIntrebarile = new();
         private Intrebare? _intrebareSelectata;
+
+        public ObservableCollection<Utilizator> Utilizatori { get; } = new();
+
+        private Utilizator? _utilizatorSelectat;
+        public Utilizator? UtilizatorSelectat
+        {
+            get => _utilizatorSelectat;
+            set
+            {
+                _utilizatorSelectat = value;
+                OnPropertyChanged(nameof(UtilizatorSelectat));
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         // Culori validare
         private static readonly SolidColorBrush BrushLabelNormal = new(Color.FromRgb(58, 58, 92));
@@ -69,7 +91,11 @@ namespace QuizWPF
                 System.IO.Path.Combine(GetBasePath(), "Data"));
 
             _adminIntrebari = new AdministrareIntrebariFisierText(caleIntrebari);
+            _adminUtilizatori = new AdministrareUtilizatoriFisierText(caleUtilizatori);
+
+            DataContext = this;
             IncarcaIntrebari();
+            IncarcaUtilizatori();
         }
 
         // ════════════════════════════════════════════════════════════════════
@@ -396,9 +422,187 @@ namespace QuizWPF
             AplicaFiltre();
         }
 
+
+
+        // ════════════════════════════════════════════════════════════════════
+        //  CRUD pentru a doua entitate: Utilizator
+        // ════════════════════════════════════════════════════════════════════
+        private void IncarcaUtilizatori(string filtru = "")
+        {
+            Utilizatori.Clear();
+
+            var lista = _adminUtilizatori.GetUtilizatori().AsEnumerable();
+            filtru = filtru.Trim().ToLower();
+
+            if (!string.IsNullOrEmpty(filtru))
+            {
+                lista = lista.Where(u =>
+                    u.IdUtilizator.ToString().Contains(filtru) ||
+                    (u.Nume?.ToLower().Contains(filtru) ?? false) ||
+                    (u.Prenume?.ToLower().Contains(filtru) ?? false));
+            }
+
+            foreach (var utilizator in lista)
+                Utilizatori.Add(utilizator);
+
+            if (TbNrUtilizatori != null)
+                TbNrUtilizatori.Text = $"{Utilizatori.Count} utilizatori";
+        }
+
+        private void OnUtilizatorSelectat(object sender, SelectionChangedEventArgs e)
+        {
+            if (LstUtilizatori.SelectedItem is not Utilizator utilizator)
+                return;
+
+            UtilizatorSelectat = utilizator;
+            TxtUserNume.Text = utilizator.Nume;
+            TxtUserPrenume.Text = utilizator.Prenume;
+            TxtUserVarsta.Text = utilizator.Varsta.ToString();
+            AscundeMesajeUtilizator();
+        }
+
+        private void OnCautaUtilizatorTextChanged(object sender, TextChangedEventArgs e)
+        {
+            IncarcaUtilizatori(TxtCautaUtilizator.Text);
+        }
+
+        private void OnAdaugaUtilizator(object sender, RoutedEventArgs e)
+        {
+            AscundeMesajeUtilizator();
+            if (!CitesteFormularUtilizator(out string nume, out string prenume, out int varsta))
+                return;
+
+            var utilizator = new Utilizator(0, nume, prenume, varsta);
+            _adminUtilizatori.AddUtilizator(utilizator);
+            IncarcaUtilizatori(TxtCautaUtilizator.Text);
+            CurataFormularUtilizator();
+            AfiseazaSuccesUtilizator();
+        }
+
+        private void OnActualizeazaUtilizator(object sender, RoutedEventArgs e)
+        {
+            AscundeMesajeUtilizator();
+            if (UtilizatorSelectat == null)
+            {
+                AfiseazaEroareUtilizator("Selectați mai întâi un utilizator din listă.");
+                return;
+            }
+
+            if (!CitesteFormularUtilizator(out string nume, out string prenume, out int varsta))
+                return;
+
+            UtilizatorSelectat.Nume = nume;
+            UtilizatorSelectat.Prenume = prenume;
+            UtilizatorSelectat.Varsta = varsta;
+
+            bool ok = _adminUtilizatori.UpdateUtilizator(UtilizatorSelectat);
+            if (ok)
+            {
+                IncarcaUtilizatori(TxtCautaUtilizator.Text);
+                AfiseazaSuccesUtilizator();
+            }
+            else
+            {
+                AfiseazaEroareUtilizator("Actualizarea nu a reușit.");
+            }
+        }
+
+        private void OnStergeUtilizator(object sender, RoutedEventArgs e)
+        {
+            AscundeMesajeUtilizator();
+            if (UtilizatorSelectat == null)
+            {
+                AfiseazaEroareUtilizator("Selectați mai întâi un utilizator din listă.");
+                return;
+            }
+
+            MessageBoxResult result = MessageBox.Show(
+                $"Sigur doriți să ștergeți utilizatorul {UtilizatorSelectat.Nume} {UtilizatorSelectat.Prenume}?",
+                "Confirmare ștergere", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+            if (result != MessageBoxResult.Yes)
+                return;
+
+            bool ok = _adminUtilizatori.DeleteUtilizator(UtilizatorSelectat.IdUtilizator);
+            if (ok)
+            {
+                CurataFormularUtilizator();
+                IncarcaUtilizatori(TxtCautaUtilizator.Text);
+                AfiseazaSuccesUtilizator();
+            }
+            else
+            {
+                AfiseazaEroareUtilizator("Ștergerea nu a reușit.");
+            }
+        }
+
+        private void OnCurataFormularUtilizator(object sender, RoutedEventArgs e)
+        {
+            AscundeMesajeUtilizator();
+            CurataFormularUtilizator();
+        }
+
+        private void CurataFormularUtilizator()
+        {
+            UtilizatorSelectat = null;
+            LstUtilizatori.SelectedItem = null;
+            TxtUserNume.Clear();
+            TxtUserPrenume.Clear();
+            TxtUserVarsta.Clear();
+        }
+
+        private bool CitesteFormularUtilizator(out string nume, out string prenume, out int varsta)
+        {
+            nume = TxtUserNume.Text.Trim();
+            prenume = TxtUserPrenume.Text.Trim();
+            varsta = 0;
+
+            if (nume.Length < 2)
+            {
+                AfiseazaEroareUtilizator("Numele trebuie să conțină minimum 2 caractere.");
+                return false;
+            }
+            if (prenume.Length < 2)
+            {
+                AfiseazaEroareUtilizator("Prenumele trebuie să conțină minimum 2 caractere.");
+                return false;
+            }
+            if (!int.TryParse(TxtUserVarsta.Text.Trim(), out varsta) || varsta < 7 || varsta > 100)
+            {
+                AfiseazaEroareUtilizator("Vârsta trebuie să fie un număr între 7 și 100.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private void AfiseazaSuccesUtilizator()
+        {
+            PanelUserSucces.Visibility = Visibility.Visible;
+            PanelUserEroare.Visibility = Visibility.Collapsed;
+        }
+
+        private void AfiseazaEroareUtilizator(string mesaj)
+        {
+            TbUserEroare.Text = mesaj;
+            PanelUserSucces.Visibility = Visibility.Collapsed;
+            PanelUserEroare.Visibility = Visibility.Visible;
+        }
+
+        private void AscundeMesajeUtilizator()
+        {
+            PanelUserSucces.Visibility = Visibility.Collapsed;
+            PanelUserEroare.Visibility = Visibility.Collapsed;
+        }
+
         // ════════════════════════════════════════════════════════════════════
         //  Meniu
         // ════════════════════════════════════════════════════════════════════
+        private void OnArataUtilizatori(object sender, RoutedEventArgs e)
+        {
+            TabPrincipal.SelectedItem = TabUtilizatori;
+        }
+
         private void OnAdaugaIntrebare(object sender, RoutedEventArgs e)
         {
             var win = new AdaugaIntrebareWindow(_adminIntrebari) { Owner = this };

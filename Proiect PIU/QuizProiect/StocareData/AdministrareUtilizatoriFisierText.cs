@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -104,14 +104,36 @@ namespace StocareData
                 {
                     Utilizator pentruScris = utilizator;
                     if (utilizator.IdUtilizator == utilizatorActualizat.IdUtilizator)
+                    {
                         pentruScris = utilizatorActualizat;
+                        succes = true;
+                    }
 
                     sw.WriteLine(pentruScris.ConversieLaSirPentruFisier());
                 }
-                succes = true;
             }
 
             return succes;
+        }
+
+
+
+        // stergere utilizator
+        public bool DeleteUtilizator(int idUtilizator)
+        {
+            List<Utilizator> utilizatori = GetUtilizatori();
+            int eliminate = utilizatori.RemoveAll(u => u.IdUtilizator == idUtilizator);
+
+            if (eliminate == 0)
+                return false;
+
+            using (StreamWriter sw = new StreamWriter(numeFisier, false))
+            {
+                foreach (Utilizator utilizator in utilizatori)
+                    sw.WriteLine(utilizator.ConversieLaSirPentruFisier());
+            }
+
+            return true;
         }
 
         private int GetNextIdUtilizator()

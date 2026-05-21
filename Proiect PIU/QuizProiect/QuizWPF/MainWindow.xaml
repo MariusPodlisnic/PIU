@@ -1,4 +1,4 @@
-<Window x:Class="QuizWPF.MainWindow"
+        <Window x:Class="QuizWPF.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Quiz App" Height="720" Width="1000" MinHeight="560" MinWidth="720"
@@ -182,6 +182,7 @@
                 <Separator/>
                 <MenuItem Header="🔄 Reîncarcă Lista" Click="OnReincarcaLista"/>
             </MenuItem>
+            <MenuItem Header="👤 Utilizatori" Click="OnArataUtilizatori"/>
             <MenuItem Header="🔍 Căutare">
                 <MenuItem Header="Caută după ID" Click="OnCautaDupaId"/>
                 <MenuItem Header="Caută după Domeniu" Click="OnCautaDupaDomeniu"/>
@@ -639,6 +640,140 @@
                                     </StackPanel>
                                 </StackPanel>
                             </ScrollViewer>
+                        </TabItem>
+
+                        <TabItem Header="👤 Utilizatori" x:Name="TabUtilizatori">
+                            <Grid Margin="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1.05*"/>
+                                    <ColumnDefinition Width="16"/>
+                                    <ColumnDefinition Width="1.35*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!--  Binding 1  -->
+                                <Border Grid.Column="0" Background="#F8F9FF" CornerRadius="10" Padding="12">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                            <TextBlock Text="👥 " FontSize="18"/>
+                                            <TextBlock Text="Lista utilizatorilor" Style="{StaticResource SectionTitle}"/>
+                                        </StackPanel>
+
+                                        <TextBox x:Name="TxtCautaUtilizator" Grid.Row="1" Style="{StaticResource InputBox}"
+                                                 Margin="0,0,0,10" TextChanged="OnCautaUtilizatorTextChanged"
+                                                 ToolTip="Caută după ID, nume sau prenume"/>
+
+                                        <ListBox x:Name="LstUtilizatori" Grid.Row="2"
+                                                 ItemsSource="{Binding Utilizatori}"
+                                                 SelectedItem="{Binding UtilizatorSelectat, Mode=TwoWay}"
+                                                 SelectionChanged="OnUtilizatorSelectat"
+                                                 BorderBrush="#E1E4F2" BorderThickness="1"
+                                                 ItemContainerStyle="{StaticResource ListBoxItemStyle}">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel>
+                                                        <TextBlock FontWeight="Bold" Foreground="#1A1A2E">
+                                                            <Run Text="#"/><Run Text="{Binding IdUtilizator}"/>
+                                                            <Run Text="  "/><Run Text="{Binding Nume}"/>
+                                                            <Run Text=" "/><Run Text="{Binding Prenume}"/>
+                                                        </TextBlock>
+                                                        <TextBlock FontSize="12" Foreground="#666688">
+                                                            <Run Text="Vârsta: "/><Run Text="{Binding Varsta}"/>
+                                                            <Run Text=" ani"/>
+                                                        </TextBlock>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+
+                                        <TextBlock x:Name="TbNrUtilizatori" Grid.Row="3" Text="0 utilizatori"
+                                                   Foreground="#666688" FontSize="12" FontWeight="Bold"
+                                                   HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                                    </Grid>
+                                </Border>
+
+                               <!--Crud-->
+                                <Border Grid.Column="2" Background="White" CornerRadius="10" Padding="16">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <StackPanel>
+                                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                                <TextBlock Text="🛠️ " FontSize="18"/>
+                                                <TextBlock Text="CRUD pentru entitatea Utilizator" Style="{StaticResource SectionTitle}"/>
+                                            </StackPanel>
+
+                                            <TextBlock Text="Aici se realizează operațiile Create, Read, Update și Delete pentru a doua entitate a aplicației."
+                                                       Foreground="#666688" TextWrapping="Wrap" Margin="0,0,0,14"/>
+
+                                            <Grid Margin="0,0,0,10">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="12"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Grid.Column="0">
+                                                    <Label Content="Nume *" Style="{StaticResource FormLabel}"/>
+                                                    <TextBox x:Name="TxtUserNume" Style="{StaticResource InputBox}"/>
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="2">
+                                                    <Label Content="Prenume *" Style="{StaticResource FormLabel}"/>
+                                                    <TextBox x:Name="TxtUserPrenume" Style="{StaticResource InputBox}"/>
+                                                </StackPanel>
+                                            </Grid>
+
+                                            <StackPanel Margin="0,0,0,12">
+                                                <Label Content="Vârsta *" Style="{StaticResource FormLabel}"/>
+                                                <TextBox x:Name="TxtUserVarsta" Style="{StaticResource InputBox}"/>
+                                            </StackPanel>
+
+                                            <Grid Margin="0,0,0,14">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="10"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="10"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Button Grid.Column="0" Content="➕ Adaugă" Style="{StaticResource BtnSuccess}" Click="OnAdaugaUtilizator"/>
+                                                <Button Grid.Column="2" Content="💾 Actualizează" Style="{StaticResource BtnPrimary}" Click="OnActualizeazaUtilizator"/>
+                                                <Button Grid.Column="4" Content="🗑️ Șterge" Style="{StaticResource BtnDanger}" Click="OnStergeUtilizator"/>
+                                            </Grid>
+
+                                            <Button Content="🧹 Curăță formularul" Style="{StaticResource BtnSecondary}"
+                                                    Margin="0,0,0,14" Click="OnCurataFormularUtilizator"/>
+
+                                            <Border Background="#F8F9FF" CornerRadius="8" Padding="12" Margin="0,0,0,10">
+                                                <StackPanel>
+                                                    <TextBlock Text="Detalii utilizator selectat" FontWeight="Bold" Foreground="#3A3A5C" Margin="0,0,0,8"/>
+                                                    
+                                                    <TextBlock Foreground="#1A1A2E" FontSize="13">
+                                                        <Run Text="ID: "/><Run Text="{Binding UtilizatorSelectat.IdUtilizator}"/>
+                                                    </TextBlock>
+                                                    <TextBlock Foreground="#1A1A2E" FontSize="13">
+                                                        <Run Text="Nume: "/><Run Text="{Binding UtilizatorSelectat.Nume}"/>
+                                                        <Run Text=" "/><Run Text="{Binding UtilizatorSelectat.Prenume}"/>
+                                                    </TextBlock>
+                                                    <TextBlock Foreground="#1A1A2E" FontSize="13">
+                                                        <Run Text="Vârsta: "/><Run Text="{Binding UtilizatorSelectat.Varsta}"/>
+                                                    </TextBlock>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <Border x:Name="PanelUserSucces" Background="#D4EDDA" CornerRadius="6" Padding="12,8" Visibility="Collapsed">
+                                                <TextBlock Text="✔ Operația a fost realizată cu succes." Foreground="#155724" FontWeight="Bold"/>
+                                            </Border>
+                                            <Border x:Name="PanelUserEroare" Background="#F8D7DA" CornerRadius="6" Padding="12,8" Visibility="Collapsed">
+                                                <TextBlock x:Name="TbUserEroare" Text="Verificați datele introduse." Foreground="#721C24" FontWeight="Bold"/>
+                                            </Border>
+                                        </StackPanel>
+                                    </ScrollViewer>
+                                </Border>
+                            </Grid>
                         </TabItem>
                     </TabControl>
                 </Border>
