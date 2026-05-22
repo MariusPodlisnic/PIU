@@ -1,8 +1,2 @@
-1,C++,Ce operator se foloseste pentru alocarea dinamica a memoriei in C++?,alloc()|malloc()|allocate()|new,3,Usor,Sintaxa
-2,Java,Ce cuvant cheie se foloseste pentru mostenire in Java?,extends|implements|inherits|derives,0,Usor,Sintaxa
-3,Python,Cum se defineste o functie in Python?,func|define|def|function,2,Usor,Sintaxa
-4,General,Ce structura de date functioneaza pe principiul LIFO?,Queue|List|Tree|Stack,3,Mediu,Teorie
-5,C++,Ce inseamna OOP?,Object Oriented Programming|Open Object Protocol|Oriented Object Process|Online Object Programming,0,Usor,Teorie
-6,Java,Ce metoda este punctul de intrare intr-un program Java?,start()|run()|init()|main(),3,Usor,Sintaxa
-7,Python,test,1|2|3|4,0,Usor,Teorie
+﻿1;Programare;Ce face operația Read?;Adaugă;Citește;Șterge;Modifică;2;Usor;Teorie
 
