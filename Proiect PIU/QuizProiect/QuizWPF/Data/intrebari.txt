@@ -1,0 +1,50 @@
+1,C++,Ce extensie are de obicei un fisier sursa C++?,.html|.txt|.cpp|.css,2,Usor,Teorie
+2,C++,Ce instructiune se foloseste pentru afisare in C++?,cin|cout|print|echo,1,Usor,Sintaxa
+3,C++,Ce instructiune se foloseste pentru citire in C++?,cout|print|cin|input,2,Usor,Sintaxa
+4,C++,Ce tip de date folosim pentru numere intregi?,string|bool|char|int,3,Usor,Sintaxa
+5,C++,Ce simbol se foloseste pentru comentariu pe o singura linie?,//|**|##|--,0,Usor,Sintaxa
+6,C#,Ce metoda se foloseste pentru afisare in consola C#?,cout|Console.WriteLine|print|echo,1,Usor,Sintaxa
+7,C#,Ce extensie are un fisier C#?,.cpp|.py|.cs|.java,2,Usor,Teorie
+8,C#,Ce cuvant cheie se foloseste pentru definirea unei clase?,object|define|structura|class,3,Usor,Sintaxa
+9,C#,Ce tip de date se foloseste pentru text?,string|int|bool|float,0,Usor,Sintaxa
+10,C#,Ce valoare poate avea tipul bool?,doar numere|true sau false|doar text|doar caractere,1,Usor,Sintaxa
+11,Python,Ce functie se foloseste pentru afisare in Python?,cout|Console.WriteLine|print|echo,2,Usor,Sintaxa
+12,Python,Ce functie se foloseste pentru citire de la tastatura?,cin|scanf|readline|input,3,Usor,Sintaxa
+13,Python,Ce extensie are un fisier Python?,.py|.cpp|.cs|.html,0,Usor,Teorie
+14,Python,Cum se creeaza o lista in Python?,cu paranteze rotunde|cu paranteze patrate|cu ghilimele|cu semnul plus,1,Mediu,Sintaxa
+15,Python,Ce instructiune se foloseste pentru conditii?,for|while|if|print,2,Usor,Sintaxa
+16,Java,Ce extensie are un fisier Java?,.js|.class|.cpp|.java,3,Usor,Teorie
+17,Java,Ce cuvant cheie se foloseste pentru mostenire?,extends|inherits|include|using,0,Mediu,Sintaxa
+18,Java,Ce metoda este punctul de pornire al unui program Java?,start|main|run|begin,1,Usor,Teorie
+19,Java,Ce cuvant cheie creeaza un obiect nou?,create|object|new|make,2,Usor,Sintaxa
+20,Java,Ce tip de date se foloseste pentru valori adevarat sau fals?,int|string|double|boolean,3,Usor,Sintaxa
+21,JavaScript,Ce extensie are un fisier JavaScript?,.js|.java|.css|.json,0,Usor,Teorie
+22,JavaScript,Ce functie afiseaza un mesaj in consola?,print|console.log|cout|Console.WriteLine,1,Usor,Sintaxa
+23,JavaScript,Ce cuvant cheie poate declara o variabila?,int|string|let|define,2,Mediu,Sintaxa
+24,JavaScript,Ce limbaj este folosit frecvent pentru pagini web interactive?,C++|SQL|Assembly|JavaScript,3,Usor,Teorie
+25,JavaScript,Ce inseamna DOM?,Document Object Model|Data Object Method|Digital Output Mode|Default Object Map,0,Mediu,Teorie
+26,HTML,Ce inseamna HTML?,High Text Machine Language|HyperText Markup Language|Hyper Tool Main Language|Home Text Markup Logic,1,Usor,Teorie
+27,HTML,Ce tag se foloseste pentru titlu principal?,p|img|h1|div,2,Usor,Sintaxa
+28,HTML,Ce tag se foloseste pentru paragraf?,h1|a|body|p,3,Usor,Sintaxa
+29,HTML,Ce tag se foloseste pentru imagine?,img|image|pic|src,0,Usor,Sintaxa
+30,HTML,Ce tag se foloseste pentru link?,link|a|href|url,1,Usor,Sintaxa
+31,CSS,Ce rol are CSS?,Creeaza baza de date|Compileaza codul C++|Stilizeaza pagina web|Ruleaza serverul,2,Usor,Teorie
+32,CSS,Ce proprietate schimba culoarea textului?,background-color|font-size|border|color,3,Usor,Sintaxa
+33,CSS,Ce proprietate schimba culoarea fundalului?,background-color|color|font-style|margin,0,Usor,Sintaxa
+34,CSS,Ce proprietate schimba marimea textului?,text-size|font-size|size|width,1,Usor,Sintaxa
+35,CSS,Ce proprietate controleaza spatiul exterior al unui element?,padding|border|margin|color,2,Mediu,Sintaxa
+36,SQL,Ce comanda se foloseste pentru selectarea datelor?,INSERT|DELETE|UPDATE|SELECT,3,Usor,Sintaxa
+37,SQL,Ce comanda se foloseste pentru adaugarea datelor?,INSERT|SELECT|DROP|WHERE,0,Usor,Sintaxa
+38,SQL,Ce comanda se foloseste pentru modificarea datelor?,CREATE|UPDATE|SELECT|FROM,1,Usor,Sintaxa
+39,SQL,Ce comanda se foloseste pentru stergerea datelor?,INSERT|ORDER|DELETE|JOIN,2,Usor,Sintaxa
+40,SQL,Ce clauza se foloseste pentru filtrarea rezultatelor?,FROM|TABLE|VALUES|WHERE,3,Mediu,Sintaxa
+41,Programare,Ce este o variabila?,Un spatiu unde se pastreaza o valoare|Un fisier imagine|Un buton|Un monitor,0,Usor,Teorie
+42,Programare,Ce este o bucla?,O eroare|O structura care repeta instructiuni|Un comentariu|Un fisier text,1,Usor,Teorie
+43,Programare,Ce este un algoritm?,Un limbaj de design|O imagine|O succesiune de pasi pentru rezolvarea unei probleme|Un calculator,2,Usor,Teorie
+44,Programare,Ce inseamna compilare?,Stergerea codului|Schimbarea culorii|Scrierea comentariilor|Transformarea codului sursa in program executabil,3,Mediu,Teorie
+45,Programare,Ce este o eroare de sintaxa?,O greseala in scrierea codului|O problema de internet|O imagine lipsa|Un fisier salvat corect,0,Usor,Teorie
+46,POO,Ce este o clasa?,O variabila simpla|Un model pentru crearea obiectelor|Un fisier text|Un tip de eroare,1,Usor,Teorie
+47,POO,Ce este un obiect?,Un comentariu|Un operator matematic|O instanta a unei clase|O baza de date,2,Usor,Teorie
+48,POO,Ce este mostenirea?,Stergerea obiectelor|Afisarea textului|Citirea unui fisier|Preluarea proprietatilor de la o alta clasa,3,Mediu,Teorie
+49,POO,Ce este incapsularea?,Protejarea datelor in interiorul clasei|Crearea unui fisier|Afisarea unei imagini|Sortarea numerelor,0,Mediu,Teorie
+50,POO,Ce este polimorfismul?,O eroare de compilare|Capacitatea obiectelor de a avea comportamente diferite|Un tip de fisier|O instructiune de citire,1,Greu,Teorie

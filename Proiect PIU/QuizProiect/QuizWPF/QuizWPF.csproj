@@ -12,4 +12,13 @@
     <ProjectReference Include="..\QuizProiect\QuizProiect.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Data\intrebari.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\utilizatori.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

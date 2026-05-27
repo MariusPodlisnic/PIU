@@ -1,0 +1,15 @@
+1,Popescu,Ion,20
+2,Rusu,Andrei,22
+3,Ceban,Maria,20
+4,Munteanu,Elena,21
+5,Rotaru,Vlad,23
+6,Plamadeala,Diana,20
+7,Balan,Cristina,24
+8,Turcan,Alexandru,22
+9,Lungu,Ana,18
+10,Spinu,Nicolae,25
+11,Bejan,Irina,21
+12,Grigoras,Sergiu,23
+13,Moraru,Daniel,20
+14,Ursu,Alina,19
+15,Ciobanu,Victor,24

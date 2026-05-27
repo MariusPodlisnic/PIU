@@ -40,17 +40,128 @@ namespace QuizWPF
         };
     }
 
-    // ─── Code-behind MainWindow ──────────────────────────────────────────────
-    public partial class MainWindow : Window, INotifyPropertyChanged
+
+
+    // ─── ViewModel de bază pentru MVVM ───────────────────────────────────────
+    public class BaseViewModel : INotifyPropertyChanged
     {
-        private readonly AdministrareIntrebariFisierText _adminIntrebari;
-        private readonly AdministrareUtilizatoriFisierText _adminUtilizatori;
-        private List<Intrebare> _toateIntrebarile = new();
-        private Intrebare? _intrebareSelectata;
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    // ─── ViewModel pentru formularul Utilizator + validare prin Binding ──────
+    public class UtilizatorFormViewModel : BaseViewModel, IDataErrorInfo
+    {
+        private string _nume = string.Empty;
+        private string _prenume = string.Empty;
+        private string _varstaText = string.Empty;
+
+        public string Nume
+        {
+            get => _nume;
+            set
+            {
+                _nume = value;
+                OnPropertyChanged(nameof(Nume));
+                OnPropertyChanged(nameof(HasErrors));
+            }
+        }
+
+        public string Prenume
+        {
+            get => _prenume;
+            set
+            {
+                _prenume = value;
+                OnPropertyChanged(nameof(Prenume));
+                OnPropertyChanged(nameof(HasErrors));
+            }
+        }
+
+        public string VarstaText
+        {
+            get => _varstaText;
+            set
+            {
+                _varstaText = value;
+                OnPropertyChanged(nameof(VarstaText));
+                OnPropertyChanged(nameof(HasErrors));
+            }
+        }
+
+        public string Error => string.Empty;
+
+        public string this[string columnName]
+        {
+            get
+            {
+                return columnName switch
+                {
+                    nameof(Nume) when string.IsNullOrWhiteSpace(Nume) => "Numele este obligatoriu.",
+                    nameof(Nume) when Nume.Trim().Length < 2 => "Numele trebuie să conțină minimum 2 caractere.",
+                    nameof(Nume) when Nume.Trim().Length > 50 => "Numele nu poate depăși 50 de caractere.",
+
+                    nameof(Prenume) when string.IsNullOrWhiteSpace(Prenume) => "Prenumele este obligatoriu.",
+                    nameof(Prenume) when Prenume.Trim().Length < 2 => "Prenumele trebuie să conțină minimum 2 caractere.",
+                    nameof(Prenume) when Prenume.Trim().Length > 50 => "Prenumele nu poate depăși 50 de caractere.",
+
+                    nameof(VarstaText) when string.IsNullOrWhiteSpace(VarstaText) => "Vârsta este obligatorie.",
+                    nameof(VarstaText) when !int.TryParse(VarstaText.Trim(), out _) => "Vârsta trebuie să fie un număr.",
+                    nameof(VarstaText) when int.Parse(VarstaText.Trim()) < 7 || int.Parse(VarstaText.Trim()) > 100 => "Vârsta trebuie să fie între 7 și 100.",
+                    _ => string.Empty
+                };
+            }
+        }
+
+        public bool HasErrors =>
+            !string.IsNullOrEmpty(this[nameof(Nume)]) ||
+            !string.IsNullOrEmpty(this[nameof(Prenume)]) ||
+            !string.IsNullOrEmpty(this[nameof(VarstaText)]);
+
+        public bool TryGetUtilizatorData(out string nume, out string prenume, out int varsta)
+        {
+            OnPropertyChanged(nameof(Nume));
+            OnPropertyChanged(nameof(Prenume));
+            OnPropertyChanged(nameof(VarstaText));
+
+            nume = Nume.Trim();
+            prenume = Prenume.Trim();
+            varsta = 0;
+
+            if (HasErrors)
+                return false;
+
+            varsta = int.Parse(VarstaText.Trim());
+            return true;
+        }
+
+        public void IncarcaDinUtilizator(Utilizator utilizator)
+        {
+            Nume = utilizator.Nume ?? string.Empty;
+            Prenume = utilizator.Prenume ?? string.Empty;
+            VarstaText = utilizator.Varsta.ToString();
+        }
+
+        public void Curata()
+        {
+            Nume = string.Empty;
+            Prenume = string.Empty;
+            VarstaText = string.Empty;
+        }
+    }
+
+    // ─── ViewModel principal: integrare minimă MVVM ──────────────────────────
+    public class MainViewModel : BaseViewModel
+    {
+        private Utilizator? _utilizatorSelectat;
 
         public ObservableCollection<Utilizator> Utilizatori { get; } = new();
+        public UtilizatorFormViewModel UtilizatorForm { get; } = new();
 
-        private Utilizator? _utilizatorSelectat;
         public Utilizator? UtilizatorSelectat
         {
             get => _utilizatorSelectat;
@@ -60,12 +171,17 @@ namespace QuizWPF
                 OnPropertyChanged(nameof(UtilizatorSelectat));
             }
         }
+    }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+    // ─── Code-behind MainWindow ──────────────────────────────────────────────
+    public partial class MainWindow : Window
+    {
+        private readonly AdministrareIntrebariFisierText _adminIntrebari;
+        private readonly AdministrareUtilizatoriFisierText _adminUtilizatori;
+        private List<Intrebare> _toateIntrebarile = new();
+        private Intrebare? _intrebareSelectata;
+
+        public MainViewModel ViewModel { get; } = new();
 
         // Culori validare
         private static readonly SolidColorBrush BrushLabelNormal = new(Color.FromRgb(58, 58, 92));
@@ -93,7 +209,7 @@ namespace QuizWPF
             _adminIntrebari = new AdministrareIntrebariFisierText(caleIntrebari);
             _adminUtilizatori = new AdministrareUtilizatoriFisierText(caleUtilizatori);
 
-            DataContext = this;
+            DataContext = ViewModel;
             IncarcaIntrebari();
             IncarcaUtilizatori();
         }
@@ -429,7 +545,7 @@ namespace QuizWPF
         // ════════════════════════════════════════════════════════════════════
         private void IncarcaUtilizatori(string filtru = "")
         {
-            Utilizatori.Clear();
+            ViewModel.Utilizatori.Clear();
 
             var lista = _adminUtilizatori.GetUtilizatori().AsEnumerable();
             filtru = filtru.Trim().ToLower();
@@ -443,10 +559,10 @@ namespace QuizWPF
             }
 
             foreach (var utilizator in lista)
-                Utilizatori.Add(utilizator);
+                ViewModel.Utilizatori.Add(utilizator);
 
             if (TbNrUtilizatori != null)
-                TbNrUtilizatori.Text = $"{Utilizatori.Count} utilizatori";
+                TbNrUtilizatori.Text = $"{ViewModel.Utilizatori.Count} utilizatori";
         }
 
         private void OnUtilizatorSelectat(object sender, SelectionChangedEventArgs e)
@@ -454,10 +570,8 @@ namespace QuizWPF
             if (LstUtilizatori.SelectedItem is not Utilizator utilizator)
                 return;
 
-            UtilizatorSelectat = utilizator;
-            TxtUserNume.Text = utilizator.Nume;
-            TxtUserPrenume.Text = utilizator.Prenume;
-            TxtUserVarsta.Text = utilizator.Varsta.ToString();
+            ViewModel.UtilizatorSelectat = utilizator;
+            ViewModel.UtilizatorForm.IncarcaDinUtilizator(utilizator);
             AscundeMesajeUtilizator();
         }
 
@@ -482,7 +596,7 @@ namespace QuizWPF
         private void OnActualizeazaUtilizator(object sender, RoutedEventArgs e)
         {
             AscundeMesajeUtilizator();
-            if (UtilizatorSelectat == null)
+            if (ViewModel.UtilizatorSelectat == null)
             {
                 AfiseazaEroareUtilizator("Selectați mai întâi un utilizator din listă.");
                 return;
@@ -491,11 +605,11 @@ namespace QuizWPF
             if (!CitesteFormularUtilizator(out string nume, out string prenume, out int varsta))
                 return;
 
-            UtilizatorSelectat.Nume = nume;
-            UtilizatorSelectat.Prenume = prenume;
-            UtilizatorSelectat.Varsta = varsta;
+            ViewModel.UtilizatorSelectat.Nume = nume;
+            ViewModel.UtilizatorSelectat.Prenume = prenume;
+            ViewModel.UtilizatorSelectat.Varsta = varsta;
 
-            bool ok = _adminUtilizatori.UpdateUtilizator(UtilizatorSelectat);
+            bool ok = _adminUtilizatori.UpdateUtilizator(ViewModel.UtilizatorSelectat);
             if (ok)
             {
                 IncarcaUtilizatori(TxtCautaUtilizator.Text);
@@ -510,20 +624,20 @@ namespace QuizWPF
         private void OnStergeUtilizator(object sender, RoutedEventArgs e)
         {
             AscundeMesajeUtilizator();
-            if (UtilizatorSelectat == null)
+            if (ViewModel.UtilizatorSelectat == null)
             {
                 AfiseazaEroareUtilizator("Selectați mai întâi un utilizator din listă.");
                 return;
             }
 
             MessageBoxResult result = MessageBox.Show(
-                $"Sigur doriți să ștergeți utilizatorul {UtilizatorSelectat.Nume} {UtilizatorSelectat.Prenume}?",
+                $"Sigur doriți să ștergeți utilizatorul {ViewModel.UtilizatorSelectat.Nume} {ViewModel.UtilizatorSelectat.Prenume}?",
                 "Confirmare ștergere", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
             if (result != MessageBoxResult.Yes)
                 return;
 
-            bool ok = _adminUtilizatori.DeleteUtilizator(UtilizatorSelectat.IdUtilizator);
+            bool ok = _adminUtilizatori.DeleteUtilizator(ViewModel.UtilizatorSelectat.IdUtilizator);
             if (ok)
             {
                 CurataFormularUtilizator();
@@ -544,32 +658,18 @@ namespace QuizWPF
 
         private void CurataFormularUtilizator()
         {
-            UtilizatorSelectat = null;
+            ViewModel.UtilizatorSelectat = null;
             LstUtilizatori.SelectedItem = null;
-            TxtUserNume.Clear();
-            TxtUserPrenume.Clear();
-            TxtUserVarsta.Clear();
+            ViewModel.UtilizatorForm.Curata();
         }
 
         private bool CitesteFormularUtilizator(out string nume, out string prenume, out int varsta)
         {
-            nume = TxtUserNume.Text.Trim();
-            prenume = TxtUserPrenume.Text.Trim();
-            varsta = 0;
+            bool valid = ViewModel.UtilizatorForm.TryGetUtilizatorData(out nume, out prenume, out varsta);
 
-            if (nume.Length < 2)
+            if (!valid)
             {
-                AfiseazaEroareUtilizator("Numele trebuie să conțină minimum 2 caractere.");
-                return false;
-            }
-            if (prenume.Length < 2)
-            {
-                AfiseazaEroareUtilizator("Prenumele trebuie să conțină minimum 2 caractere.");
-                return false;
-            }
-            if (!int.TryParse(TxtUserVarsta.Text.Trim(), out varsta) || varsta < 7 || varsta > 100)
-            {
-                AfiseazaEroareUtilizator("Vârsta trebuie să fie un număr între 7 și 100.");
+                AfiseazaEroareUtilizator("Corectați câmpurile marcate cu roșu înainte de salvare.");
                 return false;
             }
 

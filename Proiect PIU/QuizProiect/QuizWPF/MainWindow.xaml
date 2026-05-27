@@ -111,6 +111,12 @@
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="BorderBrush" Value="#38BDF8"/>
                 </Trigger>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="BorderBrush" Value="#E11D48"/>
+                    <Setter Property="Background" Value="#FFF1F2"/>
+                    <Setter Property="ToolTip"
+                            Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
             </Style.Triggers>
         </Style>
 
@@ -712,7 +718,7 @@
                                     </Grid>
                                 </Border>
 
-                                <!-- Formular CRUD utilizatori -->
+                                <!-- Formular CRUD utilizatori: câmpurile TextBox sunt legate prin Binding la UtilizatorForm din ViewModel -->
                                 <Border Grid.Column="2" Background="#F8FAFC" CornerRadius="14" Padding="16">
                                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                                         <StackPanel>
@@ -732,17 +738,26 @@
                                                 </Grid.ColumnDefinitions>
                                                 <StackPanel Grid.Column="0">
                                                     <Label Content="Nume *" Style="{StaticResource FormLabel}"/>
-                                                    <TextBox x:Name="TxtUserNume" Style="{StaticResource InputBox}"/>
+                                                    <TextBox x:Name="TxtUserNume" Style="{StaticResource InputBox}"
+                                                             Text="{Binding UtilizatorForm.Nume, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                                                    <TextBlock Style="{StaticResource ErrorMsg}" Visibility="Visible"
+                                                               Text="{Binding ElementName=TxtUserNume, Path=(Validation.Errors)[0].ErrorContent, TargetNullValue=''}"/>
                                                 </StackPanel>
                                                 <StackPanel Grid.Column="2">
                                                     <Label Content="Prenume *" Style="{StaticResource FormLabel}"/>
-                                                    <TextBox x:Name="TxtUserPrenume" Style="{StaticResource InputBox}"/>
+                                                    <TextBox x:Name="TxtUserPrenume" Style="{StaticResource InputBox}"
+                                                             Text="{Binding UtilizatorForm.Prenume, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                                                    <TextBlock Style="{StaticResource ErrorMsg}" Visibility="Visible"
+                                                               Text="{Binding ElementName=TxtUserPrenume, Path=(Validation.Errors)[0].ErrorContent, TargetNullValue=''}"/>
                                                 </StackPanel>
                                             </Grid>
 
                                             <StackPanel Margin="0,0,0,12">
                                                 <Label Content="Vârsta *" Style="{StaticResource FormLabel}"/>
-                                                <TextBox x:Name="TxtUserVarsta" Style="{StaticResource InputBox}"/>
+                                                <TextBox x:Name="TxtUserVarsta" Style="{StaticResource InputBox}"
+                                                         Text="{Binding UtilizatorForm.VarstaText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+                                                <TextBlock Style="{StaticResource ErrorMsg}" Visibility="Visible"
+                                                           Text="{Binding ElementName=TxtUserVarsta, Path=(Validation.Errors)[0].ErrorContent, TargetNullValue=''}"/>
                                             </StackPanel>
 
                                             <Grid Margin="0,0,0,14">
