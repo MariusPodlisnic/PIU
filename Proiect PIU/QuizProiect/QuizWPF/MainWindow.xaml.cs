@@ -1,3 +1,5 @@
+using LibraryUserAndIntrebari;
+using StocareData;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,8 +8,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using LibraryUserAndIntrebari;
-using StocareData;
+using System.Windows.Media.Imaging;
 
 namespace QuizWPF
 {
@@ -199,7 +200,8 @@ namespace QuizWPF
         public MainWindow()
         {
             InitializeComponent();
-
+            Uri iconUri = new Uri("pack://application:,,,/images/app_image.png", UriKind.Absolute);
+            this.Icon = BitmapFrame.Create(iconUri);
             string caleIntrebari = System.IO.Path.Combine(GetBasePath(), "Data", "intrebari.txt");
             string caleUtilizatori = System.IO.Path.Combine(GetBasePath(), "Data", "utilizatori.txt");
 

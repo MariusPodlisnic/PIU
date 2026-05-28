@@ -9,7 +9,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="images\app_image.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\QuizProiect\QuizProiect.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="images\app_image.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
